@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Sagun GC — Systems Engineer</title>
+<meta name="description" content="Sagun GC — Systems Engineer & IT Infrastructure Specialist. Network automation, cloud infrastructure, and enterprise systems."/>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0a0d14; --bg2:#0d1119; --surface:#121826; --surface2:#161d2e;
+  --border:#232b3d; --border-light:#2d3750;
+  --text:#e8ecf5; --text-dim:#8b94ab; --text-faint:#5a6480;
+  --cyan:#4fd1ff; --cyan-dim:#2a7d99;
+  --amber:#ffb454;
+  --green:#5eead4;
+  --mono:'JetBrains Mono', monospace;
+  --display:'Space Grotesk', sans-serif;
+  --body:'Inter', sans-serif;
+}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  background:var(--bg); color:var(--text); font-family:var(--body);
+  line-height:1.6; overflow-x:hidden;
+}
+@media (prefers-reduced-motion: reduce){ *{animation-duration:0.01ms !important; transition-duration:0.01ms !important;} }
+
+/* ---------- BACKGROUND GRID ---------- */
+.grid-bg{
+  position:fixed; inset:0; z-index:0; pointer-events:none;
+  background-image:
+    linear-gradient(var(--border) 1px, transparent 1px),
+    linear-gradient(90deg, var(--border) 1px, transparent 1px);
+  background-size:64px 64px;
+  opacity:0.25;
+  mask-image: radial-gradient(ellipse 80% 60% at 50% 0%, black 30%, transparent 75%);
+}
+
+/* ---------- NAV ---------- */
+nav{
+  position:fixed; top:0; left:0; right:0; z-index:100;
+  display:flex; align-items:center; justify-content:space-between;
+  padding:20px 48px; backdrop-filter:blur(12px);
+  background:rgba(10,13,20,0.7); border-bottom:1px solid transparent;
+  transition:border-color .3s, background .3s;
+}
+nav.scrolled{border-bottom-color:var(--border); background:rgba(10,13,20,0.92)}
+.nav-mark{
+  font-family:var(--mono); font-size:13px; color:var(--cyan); font-weight:600;
+  letter-spacing:0.02em; display:flex; align-items:center; gap:8px;
+}
+.nav-mark::before{content:'';width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 8px var(--green);animation:blink 2.4s ease-in-out infinite;}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0.35}}
+.nav-links{display:flex; gap:36px; list-style:none;}
+.nav-links a{
+  color:var(--text-dim); text-decoration:none; font-size:13px; font-family:var(--mono);
+  letter-spacing:0.03em; transition:color .2s; position:relative;
+}
+.nav-links a:hover{color:var(--cyan)}
+.nav-cta{
+  font-family:var(--mono); font-size:12px; color:var(--bg); background:var(--cyan);
+  padding:9px 18px; border-radius:3px; text-decoration:none; font-weight:600;
+  transition:transform .2s, box-shadow .2s;
+}
+.nav-cta:hover{transform:translateY(-1px); box-shadow:0 6px 20px rgba(79,209,255,0.25)}
+.ham{display:none; flex-direction:column; gap:5px; cursor:pointer;}
+.ham span{width:22px; height:2px; background:var(--text); border-radius:2px;}
+
+/* ---------- HERO ---------- */
+.hero{
+  position:relative; min-height:100vh; display:flex; flex-direction:column;
+  justify-content:center; padding:140px 48px 80px; max-width:1280px; margin:0 auto;
+}
+.hero-eyebrow{
+  font-family:var(--mono); font-size:12.5px; color:var(--amber); letter-spacing:0.12em;
+  text-transform:uppercase; margin-bottom:20px; display:flex; align-items:center; gap:10px;
+  opacity:0; animation:fadeUp .7s .1s ease forwards;
+}
+.hero-eyebrow .dash{width:28px; height:1px; background:var(--amber);}
+.hero h1{
+  font-family:var(--display); font-weight:700; font-size:clamp(2.6rem, 6vw, 5rem);
+  line-height:1.04; letter-spacing:-0.02em; max-width:920px;
+  opacity:0; animation:fadeUp .7s .2s ease forwards;
+}
+.hero h1 .accent{color:var(--cyan);}
+.hero-sub{
+  font-size:clamp(1rem, 1.6vw, 1.2rem); color:var(--text-dim); max-width:600px; margin-top:24px;
+  opacity:0; animation:fadeUp .7s .3s ease forwards; font-weight:400;
+}
+.hero-sub b{color:var(--text); font-weight:600;}
+.hero-actions{
+  display:flex; gap:14px; margin-top:36px; flex-wrap:wrap;
+  opacity:0; animation:fadeUp .7s .4s ease forwards;
+}
+.btn{
+  font-family:var(--mono); font-size:13px; padding:13px 26px; border-radius:3px;
+  text-decoration:none; font-weight:600; letter-spacing:0.02em; transition:all .2s;
+  display:inline-flex; align-items:center; gap:8px;
+}
+.btn-primary{background:var(--cyan); color:var(--bg);}
+.btn-primary:hover{transform:translateY(-2px); box-shadow:0 10px 28px rgba(79,209,255,0.28)}
+.btn-secondary{background:transparent; color:var(--text); border:1px solid var(--border-light);}
+.btn-secondary:hover{border-color:var(--cyan); color:var(--cyan);}
+
+@keyframes fadeUp{from{opacity:0; transform:translateY(18px)} to{opacity:1; transform:translateY(0)}}
+
+/* ---------- NETWORK TOPOLOGY SIGNATURE ---------- */
+.topo-wrap{
+  position:relative; width:100%; max-width:920px; height:340px; margin:56px auto 0;
+  opacity:0; animation:fadeUp .9s .55s ease forwards;
+}
+.topo-wrap svg{width:100%; height:100%; overflow:visible;}
+.topo-line{stroke:var(--border-light); stroke-width:1.4; fill:none;}
+.topo-line.active{stroke:var(--cyan); opacity:0.55;}
+.topo-pulse{
+  fill:var(--cyan); filter:drop-shadow(0 0 6px var(--cyan));
+  offset-rotate:0deg;
+}
+.topo-node{
+  fill:var(--surface2); stroke:var(--border-light); stroke-width:1.4;
+}
+.topo-node.core{stroke:var(--cyan); fill:#0f2733;}
+.topo-node-label{
+  font-family:var(--mono); font-size:10.5px; fill:var(--text-dim); text-anchor:middle;
+}
+.topo-node-label.core-label{fill:var(--cyan); font-weight:600;}
+
+/* ---------- SECTION SHELL ---------- */
+section{position:relative; z-index:1; padding:110px 48px;}
+.container{max-width:1100px; margin:0 auto;}
+.sec-head{margin-bottom:56px;}
+.sec-tag{
+  font-family:var(--mono); font-size:12px; color:var(--cyan); letter-spacing:0.14em;
+  text-transform:uppercase; margin-bottom:14px; display:flex; align-items:center; gap:10px;
+}
+.sec-tag .idx{color:var(--text-faint);}
+.sec-title{
+  font-family:var(--display); font-weight:600; font-size:clamp(1.7rem, 3.2vw, 2.6rem);
+  letter-spacing:-0.01em;
+}
+.sec-desc{color:var(--text-dim); max-width:560px; margin-top:14px; font-size:15.5px;}
+
+/* ---------- ABOUT ---------- */
+#about{border-top:1px solid var(--border);}
+.about-grid{display:grid; grid-template-columns:1.1fr 0.9fr; gap:64px; align-items:start;}
+.about-body p{color:var(--text-dim); margin-bottom:16px; font-size:15.5px; line-height:1.75;}
+.about-body b{color:var(--text); font-weight:600;}
+.stat-block{
+  display:grid; grid-template-columns:1fr 1fr; gap:1px; background:var(--border);
+  border:1px solid var(--border); border-radius:8px; overflow:hidden; margin-top:28px;
+}
+.stat-cell{background:var(--surface); padding:22px 20px;}
+.stat-num{
+  font-family:var(--display); font-size:1.8rem; font-weight:700; color:var(--cyan);
+  display:flex; align-items:baseline; gap:2px;
+}
+.stat-label{font-size:12px; color:var(--text-faint); margin-top:4px; font-family:var(--mono);}
+.terminal{
+  background:var(--surface); border:1px solid var(--border); border-radius:10px;
+  overflow:hidden; box-shadow:0 20px 60px -20px rgba(0,0,0,0.5);
+}
+.term-bar{
+  display:flex; align-items:center; gap:8px; padding:12px 16px; border-bottom:1px solid var(--border);
+  background:var(--surface2);
+}
+.term-dot{width:10px; height:10px; border-radius:50%;}
+.term-bar .term-title{margin-left:8px; font-family:var(--mono); font-size:11.5px; color:var(--text-faint);}
+.term-body{padding:20px 22px; font-family:var(--mono); font-size:13px; line-height:2;}
+.term-prompt{color:var(--green);}
+.term-cmd{color:var(--text);}
+.term-out{color:var(--text-dim); padding-left:0;}
+.term-key{color:var(--amber);}
+.term-cursor{display:inline-block; width:7px; height:14px; background:var(--cyan); animation:blink 1s step-end infinite; vertical-align:middle; margin-left:2px;}
+
+/* ---------- SKILLS ---------- */
+#skills{background:var(--bg2); border-top:1px solid var(--border); border-bottom:1px solid var(--border);}
+.skill-grid{display:grid; grid-template-columns:repeat(3, 1fr); gap:1px; background:var(--border); border:1px solid var(--border); border-radius:10px; overflow:hidden;}
+.skill-card{background:var(--surface); padding:28px 26px; transition:background .25s;}
+.skill-card:hover{background:var(--surface2);}
+.skill-card-head{display:flex; align-items:center; justify-content:space-between; margin-bottom:16px;}
+.skill-card h3{font-family:var(--display); font-size:1.02rem; font-weight:600;}
+.skill-card .n{font-family:var(--mono); font-size:11px; color:var(--text-faint);}
+.skill-tags{display:flex; flex-wrap:wrap; gap:7px;}
+.skill-tag{
+  font-family:var(--mono); font-size:11.5px; color:var(--text-dim); background:var(--bg);
+  border:1px solid var(--border-light); padding:5px 10px; border-radius:20px;
+}
+
+/* ---------- EXPERIENCE ---------- */
+#experience{border-top:1px solid var(--border);}
+.exp-item{
+  display:grid; grid-template-columns:200px 1fr; gap:40px; padding:36px 0;
+  border-bottom:1px solid var(--border);
+}
+.exp-item:first-of-type{padding-top:0;}
+.exp-item:last-of-type{border-bottom:none;}
+.exp-date{
+  font-family:var(--mono); font-size:12.5px; color:var(--text-faint); padding-top:4px;
+}
+.exp-date .current{color:var(--green); display:inline-flex; align-items:center; gap:6px;}
+.exp-date .current::before{content:''; width:6px; height:6px; border-radius:50%; background:var(--green); box-shadow:0 0 6px var(--green);}
+.exp-role{font-family:var(--display); font-size:1.3rem; font-weight:600; margin-bottom:4px;}
+.exp-co{font-family:var(--mono); font-size:13px; color:var(--cyan); margin-bottom:16px;}
+.exp-co span{color:var(--text-faint);}
+.exp-item ul{list-style:none;}
+.exp-item li{
+  position:relative; padding-left:20px; margin-bottom:10px; color:var(--text-dim); font-size:14.5px; line-height:1.7;
+}
+.exp-item li::before{content:'▸'; position:absolute; left:0; color:var(--cyan); font-size:12px;}
+
+/* ---------- PROJECTS ---------- */
+#projects{background:var(--bg2); border-top:1px solid var(--border); border-bottom:1px solid var(--border);}
+.proj-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:20px;}
+.proj-card{
+  background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:28px;
+  transition:transform .25s, border-color .25s;
+  display:flex; flex-direction:column; height:100%;
+}
+.proj-card:hover{transform:translateY(-4px); border-color:var(--cyan);}
+.proj-num{font-family:var(--mono); font-size:11px; color:var(--text-faint); margin-bottom:16px;}
+.proj-card h3{font-family:var(--display); font-size:1.08rem; font-weight:600; margin-bottom:12px;}
+.proj-card p{color:var(--text-dim); font-size:13.8px; line-height:1.65; flex-grow:1;}
+.proj-tools{display:flex; flex-wrap:wrap; gap:6px; margin-top:18px;}
+.proj-tool{font-family:var(--mono); font-size:10.5px; color:var(--amber); background:rgba(255,180,84,0.08); padding:4px 9px; border-radius:4px;}
+
+/* ---------- EDUCATION ---------- */
+#education{border-top:1px solid var(--border);}
+.edu-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:20px;}
+.edu-card{background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:26px; position:relative;}
+.edu-card::before{content:''; position:absolute; top:0; left:0; right:0; height:2px; background:linear-gradient(90deg, var(--cyan), transparent);}
+.edu-deg{font-family:var(--display); font-weight:600; font-size:1.02rem; margin-bottom:6px;}
+.edu-school{color:var(--cyan); font-family:var(--mono); font-size:12.5px; margin-bottom:4px;}
+.edu-yr{color:var(--text-faint); font-family:var(--mono); font-size:11.5px;}
+
+/* ---------- CONTACT ---------- */
+#contact{
+  padding:130px 48px; text-align:center; border-top:1px solid var(--border);
+  position:relative; overflow:hidden;
+}
+#contact::before{
+  content:''; position:absolute; top:50%; left:50%; width:600px; height:600px;
+  background:radial-gradient(circle, rgba(79,209,255,0.08), transparent 70%);
+  transform:translate(-50%,-50%); pointer-events:none;
+}
+.contact-tag{font-family:var(--mono); font-size:12px; color:var(--cyan); letter-spacing:0.14em; text-transform:uppercase; margin-bottom:20px;}
+.contact-title{font-family:var(--display); font-weight:700; font-size:clamp(2rem,5vw,3.4rem); letter-spacing:-0.02em; margin-bottom:20px;}
+.contact-sub{color:var(--text-dim); max-width:480px; margin:0 auto 40px; font-size:15.5px;}
+.contact-row{display:flex; gap:16px; justify-content:center; flex-wrap:wrap; position:relative; z-index:1;}
+.c-link{
+  font-family:var(--mono); font-size:13.5px; color:var(--text); background:var(--surface);
+  border:1px solid var(--border-light); padding:14px 24px; border-radius:6px; text-decoration:none;
+  display:flex; align-items:center; gap:10px; transition:all .2s;
+}
+.c-link:hover{border-color:var(--cyan); color:var(--cyan); transform:translateY(-2px);}
+.c-link .lbl{color:var(--text-faint); font-size:11px;}
+
+footer{
+  padding:28px 48px; text-align:center; border-top:1px solid var(--border);
+  font-family:var(--mono); font-size:11.5px; color:var(--text-faint);
+}
+
+/* ---------- REVEAL ---------- */
+.reveal{opacity:0; transform:translateY(24px); transition:opacity .6s ease, transform .6s ease;}
+.reveal.in{opacity:1; transform:none;}
+
+/* ---------- RESPONSIVE ---------- */
+@media (max-width:900px){
+  .about-grid{grid-template-columns:1fr;}
+  .skill-grid{grid-template-columns:1fr;}
+  .proj-grid{grid-template-columns:1fr;}
+  .edu-grid{grid-template-columns:1fr;}
+  .exp-item{grid-template-columns:1fr; gap:10px;}
+  .stat-block{grid-template-columns:1fr;}
+}
+@media (max-width:720px){
+  nav{padding:16px 20px;}
+  .nav-links{display:none;}
+  .ham{display:flex;}
+  .hero{padding:120px 20px 60px;}
+  section{padding:70px 20px;}
+  #contact{padding:90px 20px;}
+  .topo-wrap{height:260px;}
+}
+:focus-visible{outline:2px solid var(--cyan); outline-offset:3px;}
+</style>
+</head>
+<body>
+
+<div class="grid-bg"></div>
+
+<nav id="nav">
+  <div class="nav-mark">SAGUN.GC // SYSTEMS</div>
+  <ul class="nav-links">
+    <li><a href="#about">About</a></li>
+    <li><a href="#skills">Stack</a></li>
+    <li><a href="#experience">Experience</a></li>
+    <li><a href="#projects">Projects</a></li>
+    <li><a href="#education">Education</a></li>
+  </ul>
+  <a href="#contact" class="nav-cta">Contact</a>
+  <div class="ham"><span></span><span></span><span></span></div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-eyebrow"><span class="dash"></span>SYSTEMS ENGINEER · SYDNEY, AUSTRALIA</div>
+  <h1>Keeping infrastructure<br>online, <span class="accent">automated</span>,<br>and under control.</h1>
+  <p class="hero-sub">I'm <b>Sagun GC</b> — a Systems Engineer working across network infrastructure, cloud, and automation. Currently building resilience into enterprise networks at <b>Beam Broadband</b>, one access point at a time.</p>
+  <div class="hero-actions">
+    <a href="#contact" class="btn btn-primary">Get in touch →</a>
+    <a href="#experience" class="btn btn-secondary">View experience</a>
+  </div>
+
+  <div class="topo-wrap reveal" id="topo">
+    <svg viewBox="0 0 920 340" xmlns="http://www.w3.org/2000/svg">
+      <!-- lines from core to nodes -->
+      <path id="l1" class="topo-line active" d="M460,170 L160,70"/>
+      <path id="l2" class="topo-line active" d="M460,170 L320,60"/>
+      <path id="l3" class="topo-line active" d="M460,170 L600,55"/>
+      <path id="l4" class="topo-line active" d="M460,170 L770,80"/>
+      <path id="l5" class="topo-line active" d="M460,170 L150,260"/>
+      <path id="l6" class="topo-line active" d="M460,170 L340,290"/>
+      <path id="l7" class="topo-line active" d="M460,170 L590,290"/>
+      <path id="l8" class="topo-line active" d="M460,170 L780,250"/>
+
+      <!-- pulses -->
+      <circle class="topo-pulse" r="2.6"><animateMotion dur="3.1s" repeatCount="indefinite" path="M460,170 L160,70"/></circle>
+      <circle class="topo-pulse" r="2.6"><animateMotion dur="2.4s" begin="0.4s" repeatCount="indefinite" path="M460,170 L600,55"/></circle>
+      <circle class="topo-pulse" r="2.6"><animateMotion dur="2.8s" begin="0.9s" repeatCount="indefinite" path="M460,170 L150,260"/></circle>
+      <circle class="topo-pulse" r="2.6"><animateMotion dur="2.2s" begin="1.3s" repeatCount="indefinite" path="M460,170 L780,250"/></circle>
+      <circle class="topo-pulse" r="2.6"><animateMotion dur="3.4s" begin="1.7s" repeatCount="indefinite" path="M460,170 L340,290"/></circle>
+
+      <!-- outer nodes -->
+      <circle class="topo-node" cx="160" cy="70" r="26"/>
+      <text class="topo-node-label" x="160" y="66">UISP</text>
+      <text class="topo-node-label" x="160" y="79">AP-NET</text>
+
+      <circle class="topo-node" cx="320" cy="60" r="24"/>
+      <text class="topo-node-label" x="320" y="64">Azure</text>
+
+      <circle class="topo-node" cx="600" cy="55" r="24"/>
+      <text class="topo-node-label" x="600" y="59">AWS</text>
+
+      <circle class="topo-node" cx="770" cy="80" r="26"/>
+      <text class="topo-node-label" x="770" y="76">M365</text>
+      <text class="topo-node-label" x="770" y="89">Admin</text>
+
+      <circle class="topo-node" cx="150" cy="260" r="24"/>
+      <text class="topo-node-label" x="150" y="264">AD / GPO</text>
+
+      <circle class="topo-node" cx="340" cy="290" r="24"/>
+      <text class="topo-node-label" x="340" y="294">Intune</text>
+
+      <circle class="topo-node" cx="590" cy="290" r="24"/>
+      <text class="topo-node-label" x="590" y="294">Stripe</text>
+
+      <circle class="topo-node" cx="780" cy="250" r="24"/>
+      <text class="topo-node-label" x="780" y="254">Xero</text>
+
+      <!-- core node -->
+      <circle class="topo-node core" cx="460" cy="170" r="42"/>
+      <text class="topo-node-label core-label" x="460" y="166" font-size="12">SAGUN</text>
+      <text class="topo-node-label core-label" x="460" y="180" font-size="9">core</text>
+    </svg>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section id="about">
+  <div class="container">
+    <div class="sec-head reveal">
+      <div class="sec-tag"><span class="idx">01</span> / About</div>
+      <h2 class="sec-title">Infrastructure, from the ground up.</h2>
+    </div>
+    <div class="about-grid">
+      <div class="about-body reveal">
+        <p>I hold a <b>Master of Information Technology</b> from the University of Technology Sydney, and I currently work as a <b>Systems Engineer Intern at Beam Broadband</b>, where I monitor, automate, and recover network infrastructure spanning hundreds of access points.</p>
+        <p>My work sits at the intersection of <b>network operations, cloud infrastructure, and automation</b> — I've reduced offline access points across a live network from 38 down to 19 in a single session, built API integrations that eliminate manual financial reconciliation, and managed identity and endpoint compliance across enterprise Microsoft 365 environments.</p>
+        <p>Before this, I supported enterprise IT at Vivid Geeks Tech and worked as a Quality Assurance intern at ComplianceQuest in Nepal — experience that taught me structured documentation, systematic troubleshooting, and how to communicate technical problems clearly to non-technical people.</p>
+        <div class="stat-block">
+          <div class="stat-cell">
+            <div class="stat-num">50<span style="font-size:1.1rem">%</span></div>
+            <div class="stat-label">OFFLINE-AP REDUCTION</div>
+          </div>
+          <div class="stat-cell">
+            <div class="stat-num">3<span style="font-size:1.1rem">+</span></div>
+            <div class="stat-label">ORGANISATIONS SUPPORTED</div>
+          </div>
+          <div class="stat-cell">
+            <div class="stat-num">100<span style="font-size:1.1rem">+</span></div>
+            <div class="stat-label">ACCESS POINTS MANAGED</div>
+          </div>
+          <div class="stat-cell">
+            <div class="stat-num">23<span style="font-size:1.1rem">k</span></div>
+            <div class="stat-label">TRAILHEAD POINTS EARNED</div>
+          </div>
+        </div>
+      </div>
+      <div class="reveal">
+        <div class="terminal">
+          <div class="term-bar">
+            <div class="term-dot" style="background:#ff5f57"></div>
+            <div class="term-dot" style="background:#febc2e"></div>
+            <div class="term-dot" style="background:#28c840"></div>
+            <div class="term-title">sagun@systems — zsh</div>
+          </div>
+          <div class="term-body">
+            <div><span class="term-prompt">sagun@syseng</span><span class="term-cmd"> ~ % whoami</span></div>
+            <div class="term-out">Systems Engineer, Sydney AU</div>
+            <div><span class="term-prompt">sagun@syseng</span><span class="term-cmd"> ~ % cat stack.txt</span></div>
+            <div class="term-out">Microsoft 365 · Active Directory · Intune</div>
+            <div class="term-out">Azure · AWS · UISP · WireGuard</div>
+            <div class="term-out">Python · PowerShell · REST APIs</div>
+            <div><span class="term-prompt">sagun@syseng</span><span class="term-cmd"> ~ % uptime --network</span></div>
+            <div class="term-out"><span class="term-key">status:</span> stable — 19 APs recovered this week</div>
+            <div><span class="term-prompt">sagun@syseng</span><span class="term-cmd"> ~ % </span><span class="term-cursor"></span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SKILLS -->
+<section id="skills">
+  <div class="container">
+    <div class="sec-head reveal">
+      <div class="sec-tag"><span class="idx">02</span> / Stack</div>
+      <h2 class="sec-title">Tools I run infrastructure on.</h2>
+      <p class="sec-desc">The systems, platforms, and languages I use day to day — across networking, cloud, identity, and automation.</p>
+    </div>
+    <div class="skill-grid reveal">
+      <div class="skill-card">
+        <div class="skill-card-head"><h3>Network & Infra</h3><span class="n">08</span></div>
+        <div class="skill-tags">
+          <span class="skill-tag">UISP</span><span class="skill-tag">LAN/WAN</span>
+          <span class="skill-tag">DNS/DHCP</span><span class="skill-tag">VLANs</span>
+          <span class="skill-tag">WireGuard VPN</span><span class="skill-tag">Firmware Mgmt</span>
+          <span class="skill-tag">Routers & APs</span><span class="skill-tag">Windows Server</span>
+        </div>
+      </div>
+      <div class="skill-card">
+        <div class="skill-card-head"><h3>Cloud & Identity</h3><span class="n">07</span></div>
+        <div class="skill-tags">
+          <span class="skill-tag">Microsoft Azure</span><span class="skill-tag">AWS (EC2/VPC)</span>
+          <span class="skill-tag">Azure AD / Entra ID</span><span class="skill-tag">Active Directory</span>
+          <span class="skill-tag">Microsoft Intune</span><span class="skill-tag">Conditional Access</span>
+          <span class="skill-tag">VMware</span>
+        </div>
+      </div>
+      <div class="skill-card">
+        <div class="skill-card-head"><h3>Automation & Tools</h3><span class="n">08</span></div>
+        <div class="skill-tags">
+          <span class="skill-tag">Python</span><span class="skill-tag">PowerShell</span>
+          <span class="skill-tag">REST APIs</span><span class="skill-tag">M365 Admin Center</span>
+          <span class="skill-tag">Jira / Freshdesk</span><span class="skill-tag">Veeam Backup</span>
+          <span class="skill-tag">AnyDesk</span><span class="skill-tag">Salesforce</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- EXPERIENCE -->
+<section id="experience">
+  <div class="container">
+    <div class="sec-head reveal">
+      <div class="sec-tag"><span class="idx">03</span> / Experience</div>
+      <h2 class="sec-title">Where I've built and broken things.</h2>
+    </div>
+
+    <div class="exp-item reveal">
+      <div class="exp-date"><span class="current">Jun 2026 — Present</span></div>
+      <div>
+        <div class="exp-role">Systems Engineer</div>
+        <div class="exp-co">Beam Broadband <span>· Sydney, NSW · Internship</span></div>
+        <ul>
+          <li>Monitor and maintain 100+ network Access Points via UISP — diagnosing connectivity faults, rotating security keys, and pushing firmware upgrades. Reduced offline APs from 38 to 19 in a single recovery session.</li>
+          <li>Run backend server deployments, commit hostname changes, and diagnose routing/tunnel failures directly from the terminal.</li>
+          <li>Administer Microsoft 365 — user provisioning, conditional access, and OS deployment via Intune.</li>
+          <li>Built a Python-based API integration that automates payment reconciliation between Stripe and Xero, and scripted automatic subscription cancellations tied to DFS frequency-change events.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="exp-item reveal">
+      <div class="exp-date">Sept 2024 — Dec 2025</div>
+      <div>
+        <div class="exp-role">IT Support Specialist</div>
+        <div class="exp-co">Vivid Geeks Tech Pty Ltd <span>· Sydney, NSW</span></div>
+        <ul>
+          <li>Delivered Level 1/2 desktop support face-to-face, by phone, and remotely — resolving tickets within agreed SLAs.</li>
+          <li>Managed full user lifecycle through Active Directory: onboarding, offboarding, permissions, and device provisioning.</li>
+          <li>Ran patch management and vulnerability remediation across the desktop fleet via Microsoft Intune.</li>
+          <li>Maintained LAN infrastructure, wireless access points, and meeting-room technology across distributed offices.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="exp-item reveal">
+      <div class="exp-date">Aug 2022 — Dec 2022</div>
+      <div>
+        <div class="exp-role">Software Quality Assurance Intern</div>
+        <div class="exp-co">ComplianceQuest <span>· Bagmati, Nepal</span></div>
+        <ul>
+          <li>Executed Operational Qualification (OQ) scripts for functionality testing on the Salesforce platform.</li>
+          <li>Wrote user manuals and technical documentation; reported bugs with clear reproduction steps.</li>
+          <li>Earned 23 Salesforce Trailhead badges (23,000+ points) through self-directed learning.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROJECTS -->
+<section id="projects">
+  <div class="container">
+    <div class="sec-head reveal">
+      <div class="sec-tag"><span class="idx">04</span> / Projects</div>
+      <h2 class="sec-title">Things I've built on the side.</h2>
+      <p class="sec-desc">Independent projects built to solve real, specific problems — not tutorials.</p>
+    </div>
+    <div class="proj-grid reveal">
+      <div class="proj-card">
+        <div class="proj-num">/01</div>
+        <h3>Stripe → Xero Reconciliation Engine</h3>
+        <p>A Python service that pulls Stripe payouts, separates gross payments from processing fees, and writes matching records straight into Xero — eliminating manual reconciliation entirely.</p>
+        <div class="proj-tools"><span class="proj-tool">PYTHON</span><span class="proj-tool">STRIPE API</span><span class="proj-tool">XERO API</span></div>
+      </div>
+      <div class="proj-card">
+        <div class="proj-num">/02</div>
+        <h3>AWS Scalable Infrastructure Sim</h3>
+        <p>Designed and deployed a VPC-based cloud environment on AWS with EC2 instances and load balancing to simulate traffic handling for an IoT-scale system.</p>
+        <div class="proj-tools"><span class="proj-tool">AWS EC2</span><span class="proj-tool">VPC</span><span class="proj-tool">LOAD BALANCING</span></div>
+      </div>
+      <div class="proj-card">
+        <div class="proj-num">/03</div>
+        <h3>Intune Enterprise Device Lab</h3>
+        <p>Configured compliance policies, automated app deployment, and endpoint monitoring across a simulated fleet of enterprise devices using Intune and Azure AD.</p>
+        <div class="proj-tools"><span class="proj-tool">INTUNE</span><span class="proj-tool">AZURE AD</span><span class="proj-tool">M365</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- EDUCATION -->
+<section id="education">
+  <div class="container">
+    <div class="sec-head reveal">
+      <div class="sec-tag"><span class="idx">05</span> / Education</div>
+      <h2 class="sec-title">Formal foundation.</h2>
+    </div>
+    <div class="edu-grid reveal">
+      <div class="edu-card">
+        <div class="edu-deg">ACS Professional Year Program</div>
+        <div class="edu-school">Performance Education</div>
+        <div class="edu-yr">2026</div>
+      </div>
+      <div class="edu-card">
+        <div class="edu-deg">Master of Information Technology</div>
+        <div class="edu-school">University of Technology Sydney</div>
+        <div class="edu-yr">2023 — 2025</div>
+      </div>
+      <div class="edu-card">
+        <div class="edu-deg">Bachelor of Business Information Systems</div>
+        <div class="edu-school">Kathmandu University</div>
+        <div class="edu-yr">2018 — 2022</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact">
+  <div class="contact-tag">/ Contact</div>
+  <h2 class="contact-title">Let's get something<br>online together.</h2>
+  <p class="contact-sub">Open to Systems Administrator, Systems Engineer, and IT Infrastructure roles across Sydney.</p>
+  <div class="contact-row">
+    <a href="mailto:gcsagun250@gmail.com" class="c-link"><span class="lbl">EMAIL</span> gcsagun250@gmail.com</a>
+    <a href="tel:+61435961272" class="c-link"><span class="lbl">PHONE</span> +61 435 961 272</a>
+    <a href="https://linkedin.com/in/sagun-gc" target="_blank" class="c-link"><span class="lbl">LINKEDIN</span> /in/sagun-gc</a>
+  </div>
+</section>
+
+<footer>SAGUN GC — SYSTEMS ENGINEER · SYDNEY, AUSTRALIA · © 2026</footer>
+
+<script>
+window.addEventListener('scroll', () => {
+  document.getElementById('nav').classList.toggle('scrolled', window.scrollY > 30);
+});
+const obs = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if(e.isIntersecting){ e.target.classList.add('in'); obs.unobserve(e.target); } });
+}, { threshold: 0.12 });
+document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+</script>
+</body>
+</html>
